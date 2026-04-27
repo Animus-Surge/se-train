@@ -14,6 +14,7 @@ PORT = 11000
 MOD_PORT = 11001
 
 class SETrainNetworkHandler:
+
     def __init__(self, host="127.0.0.1", port=PORT, mod_port=MOD_PORT):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((host, port))
@@ -27,6 +28,7 @@ class SETrainNetworkHandler:
         self.timeout = 10.0
 
     def update(self):
+        # RX block
         try:
             while True:
                 data, addr = self.sock.recvfrom(4096)
@@ -35,14 +37,16 @@ class SETrainNetworkHandler:
                     self.in_msg_buffer.append((msg, addr))
                 except json.JSONDecodeError:
                     logger.warning(f"Received malformed JSON from {addr}")
-                    
+                
         except (BlockingIOError, socket.error):
             pass # Ignore
-        return {}
+
+        # TX block
+
 
     def poll(self):
-        if self.msg_buffer:
-            return self.msg_buffer.pop(0)
+        if self.in_msg_buffer:
+            return self.in_msg_buffer.pop(0)
         return {}, None
 
 
@@ -51,5 +55,5 @@ class SETrainNetworkHandler:
         try:
             self.sock.sendto(json_string.encode(), (ip, self.mod_port))
         except Exception as e:
-            logger.error(f"Failed to send to {ip}. Message: {json_string}")
+            logger.error(f"Failed to send to {ip}. Message: {json_string}\n{e.with_traceback()}")
 

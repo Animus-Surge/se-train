@@ -12,14 +12,22 @@ from loguru import logger
 
 class SETrainServer:
 
-    msg_handler = None
-    network_handler = None
+    running = True
     
     def __init__(self):
-        pass
+        self.msg_handler = SETrainMsgHandler()
+        self.network_handler = SETrainNetworkHandler()
 
     def start(self):
-        pass
+        # Loop
+        logger.info("Hello World!")
+
+        while self.running:
+            message = self.network_handler.poll()
+
+            self.msg_handler.handle(message[0], message[1])
+        
+        logger.info("Goodbye!")
 
 
 if __name__ == "__main__":
