@@ -12,6 +12,19 @@ namespace SETrain {
 
   [MySessionComponentDescriptor(MyUpdateOrder.AfterSimulation)]
   public class ModEntry : MySessionComponentBase {
+
+    private SETrainNetworkHandler m_NetworkHandler;
+
+    public override void LoadData() {
+      m_NetworkHandler = new SETrainNetworkHandler();
+    }
+
+    public override void UpdateAfterSimulation() {
+    }
+
+    protected override void UnloadData() {
+      m_NetworkHandler.destroy();
+    }
   }
 
 }

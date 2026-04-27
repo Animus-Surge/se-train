@@ -1,0 +1,6 @@
+*.lock
+
+*.log
+*.tar*
+*.zip
+
